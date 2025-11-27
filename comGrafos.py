@@ -70,11 +70,17 @@ graph.add_node("perguntar", perguntar)
 graph.add_node("responder", responder)
 graph.add_node("avaliar", avaliar)
 
+# Aqui estou definindo qual grafo será executado primeiro
 graph.set_entry_point("perguntar")
 
+# Aqui estou basicamente criando uma adge entre dois nós (funcs) 
+# Ou seja, quando perguntar retornar, responder sera ativada e 
+# quando responder finalizar, avaliar sera ativada
 graph.add_edge("perguntar", "responder")
 graph.add_edge("responder", "avaliar")
 
+# Aqui estou criando uma condicional de execucao de grafos 
+# dependendo do resultado do state["satisfacao"]
 graph.add_conditional_edges(
     "avaliar",
     verificar,

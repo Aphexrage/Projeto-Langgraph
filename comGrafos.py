@@ -23,8 +23,6 @@ LLM = ChatOpenAI(
     temperature= 0.7,
     api_key= OPENAI_API_KEY)
 
-print("Digite encerrar para finalizar")
-
 # Classe de estado
 class State(TypedDict):
     
@@ -51,7 +49,7 @@ def responder(state: State):
 def melhorarResposta(state: State):
 
     perguntaUser = state["pergunta"]
-    melhoriaReposta = f"O usuario acrita que sua resposta precisa de melhorias {perguntaUser}"
+    state["pergunta"] = f"Seja mais explicativo e fale que vai tentar novamente. Pergunta que precisa de melhoria: {perguntaUser}"
     return state
 
 # Pega a avalicao do user e torna o state["satisfacao"] 
@@ -77,16 +75,22 @@ graph = StateGraph(State)
 graph.add_node("perguntar", perguntar)
 graph.add_node("responder", responder)
 graph.add_node("avaliar", avaliar)
-
 # Adicionando um nó de melhoria
 graph.add_node("melhoria", melhorarResposta)
 
 # Aqui estou definindo qual grafo será executado primeiro
 graph.set_entry_point("perguntar")
 
+# Fluxo padrao:
+graph.add_edge("perguntar", "responder")
+graph.add_edge("responder", "avaliar")
+
+# Fluxo implementando melhoria na resposta:
+graph.add_edge("melhoria", "responder")
+graph.add_edge("responder", "avaliar")
+
 # Aqui estou basicamente criando uma adge entre dois nós (funcs) 
 # Ou seja, quando perguntar retornar, responder sera ativada e 
-
 
 # Aqui estou criando uma condicional de execucao de grafos 
 # dependendo do resultado do state["satisfacao"]

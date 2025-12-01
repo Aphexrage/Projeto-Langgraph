@@ -32,16 +32,16 @@ class State(TypedDict):
     
 # Pega o input do user e define como state["pergunta"]
 def perguntar(state: State):
-    pergunta = input("Qual a sua pergunta? ")
-    state["pergunta"] = pergunta
+    
+    state["pergunta"] = input("Qual a sua pergunta? ")
     return state
     
 # Retorna como state["resposta"]
 def responder(state: State):
     
-    perguntaUser = state["pergunta"]
-    resposta = LLM.invoke(perguntaUser)
-    enviar = state["resposta"] = resposta.content
+    pergunta = LLM.invoke(state["pergunta"])
+    state["pergunta"] = pergunta.content
+    print(state["pergunta"])
     return state
 
 # Quando o usuario dizer não, essa função deve pegar a resposta
@@ -49,7 +49,7 @@ def responder(state: State):
 def melhorarResposta(state: State):
 
     perguntaUser = state["pergunta"]
-    state["pergunta"] = f"Seja mais explicativo e fale que vai tentar novamente. Pergunta que precisa de melhoria: {perguntaUser}"
+    state["pergunta"] = f"O usuario acredita que sua resposta deve ser melhor. Seja mais explicativo, detalhe e resuma mais e fale que vai tentar novamente. Pergunta que precisa de melhoria: {perguntaUser}"
     return state
 
 # Pega a avalicao do user e torna o state["satisfacao"] 
@@ -57,8 +57,7 @@ def melhorarResposta(state: State):
 def avaliar(state: State):
     
     print(state['resposta'])
-    avalicao = input("Vc gostou da resposta? ")
-    state["satisfacao"] = avalicao
+    state["satisfacao"] = input("Vc gostou da resposta? ")
     return state
 
 #human in the loop:
